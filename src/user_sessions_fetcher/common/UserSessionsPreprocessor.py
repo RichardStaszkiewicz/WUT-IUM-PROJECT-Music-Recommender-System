@@ -26,7 +26,7 @@ class UserSessionsPreprocessor:
         """
         last_month_sessions = self.get_sessions_from_last_month(sessions)
         filtered_sessions = self.get_sessions_event_type_like(last_month_sessions)
-        return filtered_sessions
+        return filtered_sessions.reset_index(drop=True)
 
     @staticmethod
     def get_sessions_from_last_month(sessions: pd.DataFrame):

@@ -26,7 +26,7 @@ class UserSessionsProvider:
         try:
             user_sessions = self.user_sessions_api.get_user_sessions(user_id)
             preprocessed_sessions = self.sessions_preprocessor.get_preprocessed_sessions(user_sessions)
-            track_ids = list(preprocessed_sessions.reset_index(drop=True)[TRACK_ID_COLUMN_NAME].values)
-            return track_ids
+            track_ids = preprocessed_sessions[TRACK_ID_COLUMN_NAME].values
+            return list(track_ids)
         except Exception as e:
             Logger.info(f"An exception occurred while fetching user sessions. {e}")
