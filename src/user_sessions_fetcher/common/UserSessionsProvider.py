@@ -29,4 +29,5 @@ class UserSessionsProvider:
             track_ids = preprocessed_sessions[TRACK_ID_COLUMN_NAME].values
             return list(track_ids)
         except Exception as e:
+            print(e)
             Logger.info(f"An exception occurred while fetching user sessions. {e}")
