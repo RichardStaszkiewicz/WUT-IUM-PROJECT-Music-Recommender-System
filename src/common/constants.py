@@ -1,0 +1,1 @@
+TIMESTAMP_COLUMN_NAME = 'timestamp'
