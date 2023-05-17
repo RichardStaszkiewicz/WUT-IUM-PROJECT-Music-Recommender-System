@@ -16,7 +16,8 @@ class UserSessionsProvider:
         self.sessions_preprocessor = UserSessionsPreprocessor()
 
     def get_user_sessions(self, user_id: int,
-                          event_types=[EVENT_TYPE_LIKE, EVENT_TYPE_PLAY]) -> List:
+                          event_types=[EVENT_TYPE_LIKE, EVENT_TYPE_PLAY],
+                          period_type = 'last') -> List:
         """
         Fetches user sessions from API, preprocesses it and returns a list of tracks' IDs that user listened
         and liked in the last month.
@@ -25,7 +26,9 @@ class UserSessionsProvider:
         """
         try:
             user_sessions = self.user_sessions_api.get_user_sessions(user_id)
-            preprocessed_sessions = self.sessions_preprocessor.get_preprocessed_sessions(user_sessions, event_types)
+            preprocessed_sessions = self.sessions_preprocessor.get_preprocessed_sessions(user_sessions,
+                                                                                         event_types,
+                                                                                         period_type)
             track_ids = preprocessed_sessions[TRACK_ID_COLUMN_NAME].values
             return list(track_ids)
         except Exception as e:
