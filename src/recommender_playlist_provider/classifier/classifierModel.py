@@ -3,8 +3,6 @@ import torch.nn as nn
 import torch.utils.data as data
 import numpy as np
 
-GENRES = range(50)
-
 class Music_classifier(nn.Module):
     def __init__(self, genres):
         self.genres = genres
@@ -103,7 +101,8 @@ class MusicDataset(data.Dataset):
         self.tracks = tracks
         self.ltracks = len(tracks)
         self.sessions = sessions
-        self.z = min(self.lusers, self.ltracks)
+        self.genres = range(50)
+        self.z = max(self.lusers, self.ltracks)
 
     def __len__(self):
         return self.ltracks * self.lusers
@@ -116,7 +115,7 @@ class MusicDataset(data.Dataset):
         play = bool(sum(select['event_type'] == 'play'))
         like = bool(sum(select['event_type'] == 'like'))
         ug = u['favourite_genres']
-        ug = torch.Tensor(np.array([i in ug for i in GENRES]) * 1)
+        ug = torch.Tensor(np.array([i in ug for i in self.genres]) * 1)
         ur = torch.Tensor([u['premium_user'] * 1])
         tk = torch.Tensor([int(i == t['key']) for i in range(16)])
         tr = torch.Tensor(t.drop(labels=['id', 'key']).to_numpy().astype(np.float64))

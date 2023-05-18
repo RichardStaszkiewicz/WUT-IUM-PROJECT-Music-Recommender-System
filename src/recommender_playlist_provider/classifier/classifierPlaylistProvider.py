@@ -3,9 +3,9 @@ from src.recommender_playlist_provider.common.CallType import CallType
 from src.recommender_playlist_provider.classifier.classifierModel import Music_classifier, MusicDataset
 from src.track_preprocessor.ClassifierPreprocesor import classifierPreprocesor
 import torch
-import pandas as pd
+import torch.utils.data as data
 import numpy as np
-import joblib
+import pandas as pd
 
 class classifierPlaylistProvider(PlaylistProviderBase):
     # EMBEDDINGS_OF_ALL_TRACKS_FILENAME = "../../models/embeddings_of_all_tracks_3.npy"
@@ -35,20 +35,36 @@ class classifierPlaylistProvider(PlaylistProviderBase):
 
         user = self.preprocesor.preprocess_user(user)
         sessions = self.preprocesor.get_user_sessions(np.int64(user['user_id'][0]))
+        tracks = self.preprocesor.get_tracks()
+        to_check = MusicDataset(user, tracks, sessions)
+        to_check.genres = self.preprocesor.get_genres()
+        loader = data.DataLoader(to_check, batch_size=64, shuffle=False, drop_last=False)
 
-        to_check = MusicDataset(user, self.preprocesor.get_tracks(), sessions)
+        answer = pd.DataFrame()
+        answer['track_id'] = tracks['id']
+        answer['play'] = 0
+        answer['like'] = 0
+        pos = 0
+        self.model.eval()
+        for _ in range(5):#range(len(user) * len(tracks)):
+            x, _ = next(iter(loader))
+            x = [ [ x[0][0].to(device), x[0][1].to(device) ], [ x[1][0].to(device), x[1][1].to(device) ] ]
+            pred = self.model(x)
+            for ans in pred:
+                answer.loc[pos, 'play'] = np.float64(ans[0])
+                answer.loc[pos, 'like'] = np.float64(ans[1])
+                pos += 1
+        answer['weights'] = answer['play'] + answer['like'] + np.random.rand(len(answer))/10
 
-        return None
+        return answer['track_id'].sample(n_of_tracks, weights=answer['weights']).to_numpy()
 
     def load_model_from_file(self, device):
         # Register the custom object
-        self.model = Music_classifier(range(50))
+        self.model = Music_classifier(self.preprocesor.get_genres())
         self.model.load_state_dict(torch.load(self.model_path, map_location=device))
 
 if __name__ == "__main__":
     pre = classifierPreprocesor('src/models/classifier_track.scaler')
     pre.prepare()
-    print(pre.get_user_sessions(101))
-
-    # p = classifierPlaylistProvider('src/models/classifier.model', 'src/models/classifier_track.scaler')
-    # p.predict_recommendations(None, 5, user=pd.read_json("data/v2/users.json").loc[0])
+    p = classifierPlaylistProvider('src/models/classifier.model', pre)
+    print(p.predict_recommendations(None, 5, user=pd.read_json("data/v2/users.json").loc[0]))

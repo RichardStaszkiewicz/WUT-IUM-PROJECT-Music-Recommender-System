@@ -5,13 +5,15 @@ import joblib
 class classifierPreprocesor(object):
 
     FILE_WITH_ALL_TRACKS_FEATURES = "data/v2/tracks.json"
-    FILE_WITH_ALL_SESSIONS = "data/v2/sessions.json"
+    FILE_WITH_ALL_SESSIONS = "data/batch1/sessions_100.json" #"data/v2/sessions.json"
+    FILE_WITH_ALL_USERS = "data/v2/users.json"
 
-    def __init__(self, scaler_path) -> None:
+    def __init__(self, scaler_path, genres=None) -> None:
         self.sessions = None
         self.tracks = None
         self.scaler = None
         self.scaler_path = scaler_path
+        self.genres = genres
 
     def prepare(self):
         self.scaler = self.load_scaler_from_file(self.scaler_path)
@@ -19,13 +21,17 @@ class classifierPreprocesor(object):
         self.tracks = self.preprocess_tracks(self.tracks)
         self.sessions = self.load_all_sessions()
         self.sessions = self.preprocess_sessions(self.sessions)
-        print(self.sessions.head())
+        if self.genres is None:
+            self.genres = self.load_genres()
 
     def get_sessions(self):
         return self.sessions
 
     def get_tracks(self):
         return self.tracks
+
+    def get_genres(self):
+        return self.genres
 
     def load_all_tracks(self):
         return pd.read_json(self.FILE_WITH_ALL_TRACKS_FEATURES)
@@ -35,6 +41,10 @@ class classifierPreprocesor(object):
 
     def load_all_sessions(self):
         return pd.read_json(self.FILE_WITH_ALL_SESSIONS)
+
+    def load_genres(self):
+        users = pd.read_json(self.FILE_WITH_ALL_USERS)
+        return np.unique(np.concatenate(users['favourite_genres'].to_numpy()))
 
     def get_user_sessions(self, user_id, date=None):
         if date is None:
@@ -79,4 +89,3 @@ class classifierPreprocesor(object):
 if __name__ == "__main__":
     pre = classifierPreprocesor('src/models/classifier_track.scaler')
     pre.prepare()
-    print(pre.get_user_sessions(101))
