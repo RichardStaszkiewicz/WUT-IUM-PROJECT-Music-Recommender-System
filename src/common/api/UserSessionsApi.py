@@ -3,8 +3,8 @@ import requests
 import json
 import os
 
-from common.api.interfaces.ApiClientBase import ApiClientBase
-from common.constants import TIMESTAMP_COLUMN_NAME
+from src.common.api.interfaces.ApiClientBase import ApiClientBase
+from src.common.constants import TIMESTAMP_COLUMN_NAME
 
 """
 Mock class of UserSessionsApi.

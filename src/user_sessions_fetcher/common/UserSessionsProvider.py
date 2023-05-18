@@ -1,7 +1,7 @@
 from typing import List
 
-from common.Logger import Logger
-from common.api.UserSessionsApi import UserSessionsApi
+from src.common.Logger import Logger
+from src.common.api.UserSessionsApi import UserSessionsApi
 from src.common.constants import SESSION_ID_COLUMN_NAME, TIMESTAMP_COLUMN_NAME
 
 from src.user_sessions_fetcher.common.constants import LOCATIONS_CONFIGURATIONS_API_URL_VAR, TRACK_ID_COLUMN_NAME

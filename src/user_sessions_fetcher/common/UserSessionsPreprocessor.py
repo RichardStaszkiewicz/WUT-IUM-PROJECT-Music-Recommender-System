@@ -2,7 +2,7 @@ import pandas as pd
 from datetime import datetime, timedelta
 from typing import List
 
-from common.Logger import Logger
+from src.common.Logger import Logger
 
 from src.user_sessions_fetcher.common.constants import (
     TIMESTAMP_COLUMN_NAME,
