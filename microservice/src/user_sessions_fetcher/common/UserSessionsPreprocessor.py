@@ -16,7 +16,8 @@ class UserSessionsPreprocessor:
     def __init__(self):
         Logger.info('[REPOSITORY] Creating User Sessions Preprocessor')
 
-    def get_preprocessed_sessions(self, sessions: pd.DataFrame, event_types: List[str], period_type) -> pd.DataFrame:
+    def get_preprocessed_sessions(self, sessions: pd.DataFrame, event_types: List[str],
+                                  period_type) -> pd.DataFrame:
         """
         Preprocesses data:
         1. Get data from last month
@@ -26,7 +27,7 @@ class UserSessionsPreprocessor:
         """
         if period_type == 'last':
             filtered_sessions = self.get_sessions_from_last_month(sessions)
-        else:
+        elif period_type == 'next':
             filtered_sessions = self.get_sessions_from_next_month(sessions)
         filtered_sessions = self.get_sessions_event_type(filtered_sessions, event_types)
         return filtered_sessions.reset_index(drop=True)
@@ -34,7 +35,7 @@ class UserSessionsPreprocessor:
     @staticmethod
     def get_sessions_from_last_month(sessions: pd.DataFrame) -> pd.DataFrame:
         # today = datetime.today()
-        today = datetime.strptime("2021-11-01", "%Y-%m-%d")  # TODO: MOCK DATE for user 108 data
+        today = datetime.strptime("2022-09-01", "%Y-%m-%d")  # TODO: MOCK DATE for user 108 data
         last_month = today - timedelta(days=30)
         filtered_sessions = sessions[(sessions[TIMESTAMP_COLUMN_NAME] > last_month)
                                      & (sessions[TIMESTAMP_COLUMN_NAME] <= today)]
@@ -43,7 +44,7 @@ class UserSessionsPreprocessor:
     @staticmethod
     def get_sessions_from_next_month(sessions: pd.DataFrame) -> pd.DataFrame:
         # today = datetime.today()
-        today = datetime.strptime("2021-11-01", "%Y-%m-%d")  # TODO: MOCK DATE for user 108 data
+        today = datetime.strptime("2022-09-01", "%Y-%m-%d")  # TODO: MOCK DATE for user 108 data
         next_month = today + timedelta(days=30)
         filtered_sessions = sessions[(sessions[TIMESTAMP_COLUMN_NAME] <= next_month)
                                      & (sessions[TIMESTAMP_COLUMN_NAME] > today)]
