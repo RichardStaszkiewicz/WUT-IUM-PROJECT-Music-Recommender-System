@@ -4,13 +4,14 @@ import joblib
 
 class classifierPreprocesor(object):
 
-    FILE_WITH_ALL_TRACKS_FEATURES = "data/v2/tracks.json"
-    FILE_WITH_ALL_SESSIONS = "data/batch1/sessions_100.json" #"data/v2/sessions.json"
-    FILE_WITH_ALL_USERS = "data/v2/users.json"
+    FILE_WITH_ALL_TRACKS_FEATURES = "../data/batch1/tracks.json"
+    FILE_WITH_ALL_SESSIONS = "../data/batch1/sessions_100.json" #"data/v2/sessions.json"
+    FILE_WITH_ALL_USERS = "../data/v2/users.json"
 
     def __init__(self, scaler_path, genres=None) -> None:
         self.sessions = None
         self.tracks = None
+        self.users = None
         self.scaler = None
         self.scaler_path = scaler_path
         self.genres = genres
@@ -33,8 +34,14 @@ class classifierPreprocesor(object):
     def get_genres(self):
         return self.genres
 
+    def get_users(self):
+        return self.users
+
     def load_all_tracks(self):
         return pd.read_json(self.FILE_WITH_ALL_TRACKS_FEATURES)
+
+    def load_all_users(self):
+        return pd.read_json(self.FILE_WITH_ALL_USERS)
 
     def get_features_of_track_ids(self, tracks_ids):
         return self.tracks[self.tracks.id.isin(tracks_ids)]
@@ -43,8 +50,9 @@ class classifierPreprocesor(object):
         return pd.read_json(self.FILE_WITH_ALL_SESSIONS)
 
     def load_genres(self):
-        users = pd.read_json(self.FILE_WITH_ALL_USERS)
-        return np.unique(np.concatenate(users['favourite_genres'].to_numpy()))
+        if self.users is None:
+            self.users = pd.read_json(self.FILE_WITH_ALL_USERS)
+        return np.unique(np.concatenate(self.users['favourite_genres'].to_numpy()))
 
     def get_user_sessions(self, user_id, date=None):
         if date is None:
@@ -76,7 +84,9 @@ class classifierPreprocesor(object):
         sessions = sessions[to_drop]
         return sessions
 
-    def preprocess_user(self, user):
+    def preprocess_user(self, user_id):
+        self.users = self.load_all_users()
+        user = self.users[self.users['user_id'] == user_id]
         user = user[['user_id', 'favourite_genres', 'premium_user']]
         user['premium_user'] = user['premium_user'] * 1
         if type(user) != pd.DataFrame:
