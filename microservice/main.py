@@ -95,8 +95,8 @@ def predict(model_id: int, input: Input):
 
 
 def model1_predict(input: Input) -> List:
-    session_track_ids_user_108_like = usp.get_user_sessions(input.user_id,
-                                                            [EVENT_TYPE_LIKE], 'last')
+    session_track_ids_user_like = usp.get_user_sessions(input.user_id,
+                                                        [EVENT_TYPE_LIKE], 'last')
 
     # number of recomm to produce based on number of tracks listened in the last month by user
     avg_n_of_tracks_in_user_sessions = usp.get_avg_n_of_tracks_in_user_sessions(input.user_id)
@@ -106,6 +106,8 @@ def model1_predict(input: Input) -> List:
                                  ids_all_tracks=all_track_ids,
                                  all_tracks_features=tracks_features)
 
-    recommendations = vae_pp.predict_recommendations(past_sessions_tracks_ids=session_track_ids_user_108_like,
+    recommendations = vae_pp.predict_recommendations(past_sessions_tracks_ids=session_track_ids_user_like,
                                                      n_of_tracks=avg_n_of_tracks_in_user_sessions)
     return recommendations
+
+
