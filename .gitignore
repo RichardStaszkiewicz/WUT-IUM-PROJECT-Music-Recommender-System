@@ -3,3 +3,5 @@ data/
 **/.ipynb_checkpoints/
 plots/
 **/__pycache__/
+/microservice/models_old/
+/data/v2/
