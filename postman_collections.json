@@ -1,0 +1,42 @@
+{
+	"info": {
+		"_postman_id": "4ef54709-1262-4d25-aa56-68af3e16b11d",
+		"name": "IUM",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "21656929"
+	},
+	"item": [
+		{
+			"name": "Model 1 predict",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"user_id\": 108\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "127.0.0.1:8000/models/1/predict",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"models",
+						"1",
+						"predict"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
