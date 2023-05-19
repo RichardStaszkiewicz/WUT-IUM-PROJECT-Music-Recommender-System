@@ -1,14 +1,10 @@
-import pandas as pd
-import tensorflow as tf
-from tensorflow.keras import layers
 import numpy as np
 
-from src.recommender_playlist_provider.common.interfaces.PlaylistProviderBase import PlaylistProviderBase
 from src.track_preprocessor.VAEPreprocessor import VAEPreprocessor
 from src.recommender_playlist_provider.common.CallType import CallType
 
 
-class VAEPlaylistProvider(PlaylistProviderBase):
+class VAEPlaylistProvider:
     def __init__(self, model, embeddings_all_tracks,
                  ids_all_tracks, all_tracks_features):
         super().__init__()

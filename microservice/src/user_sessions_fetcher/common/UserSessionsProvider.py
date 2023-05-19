@@ -1,8 +1,9 @@
 from typing import List
+import pandas as pd
 
 from src.common.Logger import Logger
-from src.common.api.UserSessionsApi import UserSessionsApi
-from src.common.constants import SESSION_ID_COLUMN_NAME, TIMESTAMP_COLUMN_NAME
+
+from src.common.constants import (SESSION_ID_COLUMN_NAME, TIMESTAMP_COLUMN_NAME, USER_ID_COLUMN_NAME)
 
 from src.user_sessions_fetcher.common.constants import LOCATIONS_CONFIGURATIONS_API_URL_VAR, TRACK_ID_COLUMN_NAME
 from src.user_sessions_fetcher.common.UserSessionsPreprocessor import UserSessionsPreprocessor
@@ -10,10 +11,13 @@ from src.user_sessions_fetcher.common.constants import (EVENT_TYPE_PLAY, EVENT_T
 
 
 class UserSessionsProvider:
-    def __init__(self, SESSIONS_DIR="../data/test/"):
+    def __init__(self, sessions: pd.DataFrame):
         Logger.info('[REPOSITORY] Creating User Sessions Provider')
-        self.user_sessions_api = UserSessionsApi(LOCATIONS_CONFIGURATIONS_API_URL_VAR, SESSIONS_DIR)
+        self.sessions = sessions
         self.sessions_preprocessor = UserSessionsPreprocessor()
+
+    def _slice_user_sessions(self, user_id: int):
+        return self.sessions[self.sessions[USER_ID_COLUMN_NAME] == user_id].reset_index(drop=True)
 
     def get_user_sessions(self, user_id: int,
                           event_types=[EVENT_TYPE_LIKE, EVENT_TYPE_PLAY],
@@ -25,7 +29,7 @@ class UserSessionsProvider:
         :return: List of track ids
         """
         try:
-            user_sessions = self.user_sessions_api.get_user_sessions(user_id)
+            user_sessions = self._slice_user_sessions(user_id)
             preprocessed_sessions = self.sessions_preprocessor.get_preprocessed_sessions(user_sessions,
                                                                                          event_types,
                                                                                          period_type)
@@ -37,7 +41,7 @@ class UserSessionsProvider:
 
     def get_avg_n_of_tracks_in_user_sessions(self, user_id: int) -> int:
         try:
-            user_sessions = self.user_sessions_api.get_user_sessions(user_id)
+            user_sessions = self._slice_user_sessions(user_id)
             last_month_sessions = self.sessions_preprocessor.get_sessions_from_last_month(user_sessions)
             tracks_per_session = last_month_sessions.groupby(SESSION_ID_COLUMN_NAME)[TIMESTAMP_COLUMN_NAME].count()
             return int(tracks_per_session.mean())

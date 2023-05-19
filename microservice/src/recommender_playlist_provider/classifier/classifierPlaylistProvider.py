@@ -1,4 +1,3 @@
-from src.recommender_playlist_provider.common.interfaces.PlaylistProviderBase import PlaylistProviderBase
 from src.recommender_playlist_provider.common.CallType import CallType
 from src.recommender_playlist_provider.classifier.classifierModel import Music_classifier, MusicDataset
 from src.track_preprocessor.ClassifierPreprocesor import classifierPreprocesor
@@ -7,7 +6,7 @@ import torch.utils.data as data
 import numpy as np
 import pandas as pd
 
-class classifierPlaylistProvider(PlaylistProviderBase):
+class classifierPlaylistProvider:
     # EMBEDDINGS_OF_ALL_TRACKS_FILENAME = "../../models/embeddings_of_all_tracks_3.npy"
     IDS_OF_ALL_TRACKS_FILENAME = "../../models/track_ids_3.npy"
 

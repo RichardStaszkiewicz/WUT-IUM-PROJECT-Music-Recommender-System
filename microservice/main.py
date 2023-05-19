@@ -1,6 +1,5 @@
 import datetime
 import os
-import pickle
 from typing import List
 
 from fastapi import FastAPI
@@ -26,15 +25,26 @@ app.add_middleware(
     allow_headers=headers
 )
 
-# USER SESSIONS PROVIDER
-from src.user_sessions_fetcher.common.UserSessionsProvider import UserSessionsProvider
-from src.user_sessions_fetcher.common.constants import (EVENT_TYPE_PLAY, EVENT_TYPE_LIKE)
+### LOAD AB TESTS RESULTS ###
 
-usp = UserSessionsProvider("../data/test")
+AB_TESTS_RESULTS_FILEPATH = "..\\data\\ab_results.csv"
 
 
+class ABResult(BaseModel):
+    created_at: datetime.datetime
+    user_id: int
+    group: int
+    model: int
+    recomm_successful: bool
 
-# LOAD session file #
+
+if os.path.isfile(AB_TESTS_RESULTS_FILEPATH):
+    ab_tests = pd.read_csv(AB_TESTS_RESULTS_FILEPATH)
+else:
+    col_names = list(ABResult.__annotations__.keys())
+    ab_tests = pd.DataFrame(columns=col_names)
+
+### LOAD SESSION FILE ###
 
 from src.recommender_playlist_provider.vae.VAEPlaylistProvider import VAEPlaylistProvider
 
@@ -42,6 +52,11 @@ DATA_DIR = "..\\data"
 
 with open(os.path.join(DATA_DIR, "tracks.json"), "rb") as f:
     tracks_features = pd.read_json(f)
+
+sessions = pd.read_excel(os.path.join(DATA_DIR, "sessions.xlsx"))
+
+with open(os.path.join(DATA_DIR, "available_users.npy"), "rb") as f:
+    available_users = np.load(f, allow_pickle=True)
 
 ### LOADING ENCODER MODEL ###
 
@@ -59,9 +74,18 @@ with open(os.path.join(ENCODER_DIR_FILES, "track_ids.npy"), "rb") as f:
 class Input(BaseModel):
     user_id: int
 
+# USER SESSIONS PROVIDER
+from src.user_sessions_fetcher.common.UserSessionsProvider import UserSessionsProvider
+from src.user_sessions_fetcher.common.constants import (EVENT_TYPE_PLAY, EVENT_TYPE_LIKE)
+
+usp = UserSessionsProvider(sessions)
+
 
 @app.post("/models/{model_id}/predict")
 def predict(model_id: int, input: Input):
+    if input.user_id not in available_users:
+        return {"error": f"data unavailable for user: {input.user_id}"}
+
     if model_id == 1:
         return model1_predict(input)
     elif model_id == 2:
