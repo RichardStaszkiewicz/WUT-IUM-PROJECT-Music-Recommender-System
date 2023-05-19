@@ -109,6 +109,14 @@ def predict(model_id: int, input: Input):
         return {"error": "model not found"}
 
 
+def check_recommendations(user_id, recommended_tracks) -> bool:
+
+    next_month_sessions = usp.get_user_sessions(user_id, event_types=[EVENT_TYPE_LIKE, EVENT_TYPE_PLAY],
+                                                period_type='next')
+
+    return bool(set(recommended_tracks) & set(next_month_sessions))
+
+
 @app.post("/perform_ab_test")
 def ab_test(input: Input):
     group = 0 #input.user_id % 2
@@ -121,7 +129,7 @@ def ab_test(input: Input):
     df_ab_tests = load_ab_tests()
 
     # recommended_tracks
-    prediction = 1
+    prediction = check_recommendations(input.user_id, recommended_tracks)
 
     df_ab_tests = df_ab_tests.append(
         {
