@@ -109,3 +109,18 @@ def model1_predict(input: Input) -> List:
     recommendations = vae_pp.predict_recommendations(past_sessions_tracks_ids=session_track_ids_user_108_like,
                                                      n_of_tracks=avg_n_of_tracks_in_user_sessions)
     return recommendations
+
+from src.recommender_playlist_provider.classifier.classifierPlaylistProvider import classifierPlaylistProvider
+from src.track_preprocessor.ClassifierPreprocesor import classifierPreprocesor
+
+SCALER_PATH = 'models/classifier_track.scaler'
+MODEL_PATH = 'models/classifier.model'
+
+pre = classifierPreprocesor(SCALER_PATH)
+pre.prepare()
+
+def model2_predict(input: Input) -> List:
+    # number of recomm to produce based on number of tracks listened in the last month by user
+    avg_n_of_tracks_in_user_sessions = usp.get_avg_n_of_tracks_in_user_sessions(input.user_id)
+    p = classifierPlaylistProvider(MODEL_PATH, pre)
+    return p.predict_recommendations(n_of_tracks=avg_n_of_tracks_in_user_sessions, user_id=input.user_id)
