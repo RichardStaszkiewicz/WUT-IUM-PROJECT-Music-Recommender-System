@@ -52,7 +52,7 @@ class VAEPlaylistProvider(PlaylistProviderBase):
         sorted_indices = np.argsort(track_ids_and_distances[:, 1])
 
         ids_of_tracks_to_recomm = track_ids_and_distances[sorted_indices][:n_of_tracks, 0].astype(int)
-        return tracks_ids[ids_of_tracks_to_recomm]
+        return list(tracks_ids[ids_of_tracks_to_recomm])
 
     def _embed_tracks_to_latent_space(self, tracks):
         preprocessed_tracks = self.vae_preprocessor.preprocess_tracks(tracks_data=tracks,

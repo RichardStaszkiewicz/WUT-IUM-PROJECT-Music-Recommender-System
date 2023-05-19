@@ -70,10 +70,11 @@ def predict(model_id: int, input: Input):
         return {"error": "model not found"}
 
 
-def model1_predict(input: Input):
+def model1_predict(input: Input) -> List:
     session_track_ids_user_108_like = usp.get_user_sessions(input.user_id,
                                                             [EVENT_TYPE_LIKE], 'last')
 
+    # number of recomm to produce based on number of tracks listened in the last month by user
     avg_n_of_tracks_in_user_sessions = usp.get_avg_n_of_tracks_in_user_sessions(input.user_id)
 
     vae_pp = VAEPlaylistProvider(model=encoder,
@@ -83,4 +84,4 @@ def model1_predict(input: Input):
 
     recommendations = vae_pp.predict_recommendations(past_sessions_tracks_ids=session_track_ids_user_108_like,
                                                      n_of_tracks=avg_n_of_tracks_in_user_sessions)
-    return list(recommendations)
+    return recommendations
