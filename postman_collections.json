@@ -37,6 +37,38 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Model 2 predict",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"user_id\": 108\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "127.0.0.1:8000/models/2/predict",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"models",
+						"2",
+						"predict"
+					]
+				}
+			},
+			"response": []
 		}
 	]
 }

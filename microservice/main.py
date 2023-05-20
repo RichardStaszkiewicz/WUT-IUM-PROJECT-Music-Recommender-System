@@ -55,7 +55,7 @@ df_ab_tests = load_ab_tests()
 
 from src.recommender_playlist_provider.vae.VAEPlaylistProvider import VAEPlaylistProvider
 
-DATA_DIR = "..\\data"
+DATA_DIR = "../data" ### Windows : "..\\data"
 
 with open(os.path.join(DATA_DIR, "tracks.json"), "rb") as f:
     tracks_features = pd.read_json(f)
@@ -72,7 +72,7 @@ with open(os.path.join(DATA_DIR, "available_users.npy"), "rb") as f:
 ### LOADING ENCODER MODEL ###
 
 
-ENCODER_DIR_FILES = "models\\encoder"
+ENCODER_DIR_FILES = "models/encoder"### windows: "models\\encoder"
 
 encoder = keras.models.load_model(os.path.join(ENCODER_DIR_FILES, "encoder_v4.h5"), compile=True)
 
@@ -104,7 +104,7 @@ def predict(model_id: int, input: Input):
     if model_id == 1:
         return model1_predict(input)
     elif model_id == 2:
-        return input.user_id #model2_predict(input)
+        return model2_predict(input) #input.user_id
     else:
         return {"error": "model not found"}
 
@@ -115,8 +115,8 @@ def ab_test(input: Input):
     if group == 0:
         recommended_tracks = model1_predict(input)
     else:
-        pass
-        #prediction = model2_predict(input)
+        # pass
+        recommended_tracks = model2_predict(input)
 
     df_ab_tests = load_ab_tests()
 
@@ -176,11 +176,11 @@ SCALER_PATH = 'models/classifier_track.scaler'
 MODEL_PATH = 'models/classifier.model'
 
 
-# pre = classifierPreprocesor(SCALER_PATH, sessions, tracks_features, users)
-# pre.prepare()
-#
-# def model2_predict(input: Input) -> List:
-#     # number of recomm to produce based on number of tracks listened in the last month by user
-#     avg_n_of_tracks_in_user_sessions = usp.get_avg_n_of_tracks_in_user_sessions(input.user_id)
-#     p = classifierPlaylistProvider(MODEL_PATH, pre)
-#     return p.predict_recommendations(n_of_tracks=avg_n_of_tracks_in_user_sessions, user_id=input.user_id)
+pre = classifierPreprocesor(SCALER_PATH)
+pre.prepare()
+
+def model2_predict(input: Input) -> List:
+    # number of recomm to produce based on number of tracks listened in the last month by user
+    avg_n_of_tracks_in_user_sessions = usp.get_avg_n_of_tracks_in_user_sessions(input.user_id)
+    p = classifierPlaylistProvider(MODEL_PATH, pre)
+    return p.predict_recommendations(n_of_tracks=avg_n_of_tracks_in_user_sessions, user_id=input.user_id)
