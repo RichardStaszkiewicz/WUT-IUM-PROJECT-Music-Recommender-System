@@ -7,13 +7,45 @@
 	},
 	"item": [
 		{
+			"name": "Model 2 predict",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"user_id\": 429\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "127.0.0.1:8000/models/2/predict",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"models",
+						"2",
+						"predict"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Model 1 predict",
 			"request": {
 				"method": "POST",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"user_id\": 108\n}",
+					"raw": "{\n    \"user_id\": 429\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -39,13 +71,13 @@
 			"response": []
 		},
 		{
-			"name": "Model 2 predict",
+			"name": "Clear AB test results",
 			"request": {
-				"method": "POST",
+				"method": "DELETE",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"user_id\": 108\n}",
+					"raw": "",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -53,7 +85,7 @@
 					}
 				},
 				"url": {
-					"raw": "127.0.0.1:8000/models/2/predict",
+					"raw": "127.0.0.1:8000/ab_test/results",
 					"host": [
 						"127",
 						"0",
@@ -62,9 +94,72 @@
 					],
 					"port": "8000",
 					"path": [
-						"models",
-						"2",
-						"predict"
+						"ab_test",
+						"results"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get AB test results",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"genres\": [\n        \"album rock\",\n        \"art rock\",\n        \"classic rock\",\n        \"folk rock\",\n        \"glam rock\",\n        \"protopunk\",\n        \"psychedelic rock\",\n        \"rock\"\n    ],\n    \"favourite_genres\": [\n        \"funk\",\n        \"filmi\",\n        \"metal\"\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "127.0.0.1:8000/ab_test/results",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"ab_test",
+						"results"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Perform AB test",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"user_id\": 429\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "127.0.0.1:8000/perform_ab_test",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"perform_ab_test"
 					]
 				}
 			},
