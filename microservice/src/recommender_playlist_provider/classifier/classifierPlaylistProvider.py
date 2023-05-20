@@ -21,12 +21,7 @@ class classifierPlaylistProvider:
         Returns indices of n_of_tracks
         :param past_sessions_tracks_ids:
         :param n_of_tracks:
-        :user: users.loc[x] ->  user_id                                                   102
-                                name                                                      NaN
-                                city                                                      NaN
-                                street                                                    NaN
-                                favourite_genres    [reggaeton, latin arena pop, modern rock]
-                                premium_user                                            False
+        :user_id:
         :return:
         """
         device = torch.device('cpu') if not torch.cuda.is_available() else torch.device('cuda')

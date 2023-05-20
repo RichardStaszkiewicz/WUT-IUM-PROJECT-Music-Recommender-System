@@ -10,6 +10,8 @@ from tensorflow import keras
 import numpy as np
 import pandas as pd
 
+OS = "LINUX" # "WINDOWS"
+
 
 app = FastAPI()
 
@@ -27,8 +29,10 @@ app.add_middleware(
 
 ### LOAD AB TESTS RESULTS ###
 
-AB_TESTS_RESULTS_FILEPATH = "..\\data\\ab_results.csv"
-
+if OS == "WINDOWS":
+    AB_TESTS_RESULTS_FILEPATH = "..\\data\\ab_results.csv"
+else:
+    AB_TESTS_RESULTS_FILEPATH = "../data/ab_results.csv"
 
 class ABResult(BaseModel):
     created_at: datetime.datetime
@@ -55,7 +59,10 @@ df_ab_tests = load_ab_tests()
 
 from src.recommender_playlist_provider.vae.VAEPlaylistProvider import VAEPlaylistProvider
 
-DATA_DIR = "../data" ### Windows : "..\\data"
+if OS == "WINDOWS":
+    DATA_DIR = "..\\data"
+else:
+    DATA_DIR = "../data"
 
 with open(os.path.join(DATA_DIR, "tracks.json"), "rb") as f:
     tracks_features = pd.read_json(f)
@@ -72,7 +79,10 @@ with open(os.path.join(DATA_DIR, "available_users.npy"), "rb") as f:
 ### LOADING ENCODER MODEL ###
 
 
-ENCODER_DIR_FILES = "models/encoder"### windows: "models\\encoder"
+if OS == "WINDOWS":
+    ENCODER_DIR_FILES = "models\\encoder"
+else:
+    ENCODER_DIR_FILES = "models/encoder"### windows: "models\\encoder"
 
 encoder = keras.models.load_model(os.path.join(ENCODER_DIR_FILES, "encoder_v4.h5"), compile=True)
 
@@ -180,11 +190,14 @@ from src.recommender_playlist_provider.classifier.classifierPlaylistProvider imp
 from src.track_preprocessor.ClassifierPreprocesor import classifierPreprocesor
 
 
-SCALER_PATH = 'models/classifier_track.scaler'
-MODEL_PATH = 'models/classifier.model'
+if OS == "WINDOWS":
+    SCALER_PATH = 'models\\classifier_track.scaler'
+    MODEL_PATH = 'models\\classifier.model'
+else:
+    SCALER_PATH = 'models/classifier_track.scaler'
+    MODEL_PATH = 'models/classifier.model'
 
-
-pre = classifierPreprocesor(SCALER_PATH)
+pre = classifierPreprocesor(SCALER_PATH, OS=OS)
 pre.prepare()
 
 def model2_predict(input: Input) -> List:
