@@ -205,7 +205,7 @@ def model2_predict(input: Input) -> List:
     avg_n_of_tracks_in_user_sessions = usp.get_avg_n_of_tracks_in_user_sessions(input.user_id)
     p = classifierPlaylistProvider(MODEL_PATH, pre)
     x = p.predict_recommendations(n_of_tracks=avg_n_of_tracks_in_user_sessions, user_id=input.user_id)
-    print(x)
+    x = [z for z in x if z is not None]
     return x
 
 if __name__ == "__main__":
@@ -213,4 +213,6 @@ if __name__ == "__main__":
         def __init__(self):
             self.user_id = 429
     x = z()
-    model2_predict(x)
+    print("Model 2", model2_predict(x))
+    print('\n\n\n')
+    print("Model 1", model1_predict(x))
