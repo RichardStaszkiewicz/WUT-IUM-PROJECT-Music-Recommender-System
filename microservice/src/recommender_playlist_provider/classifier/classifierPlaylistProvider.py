@@ -28,7 +28,8 @@ class classifierPlaylistProvider:
         self.load_model_from_file(device)
 
         user = self.preprocesor.preprocess_user(user_id)
-        sessions = self.preprocesor.get_user_sessions(np.int64(user['user_id'][0]))
+        #sessions = self.preprocesor.get_user_sessions(np.int64(user['user_id'][0]))
+        sessions = self.preprocesor.get_dummie_sessions()
         tracks = self.preprocesor.get_tracks()
         to_check = MusicDataset(user, tracks, sessions)
         to_check.genres = self.preprocesor.get_genres()
@@ -61,4 +62,4 @@ if __name__ == "__main__":
     pre = classifierPreprocesor('models/classifier_track.scaler')
     pre.prepare()
     p = classifierPlaylistProvider('models/classifier.model', pre)
-    print(p.predict_recommendations(5, user_id=101))#pd.read_json("data/v2/users.json").loc[0]))
+    print(p.predict_recommendations(5, user_id=429))#pd.read_json("data/v2/users.json").loc[0]))

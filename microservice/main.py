@@ -129,7 +129,7 @@ def check_recommendations(user_id, recommended_tracks) -> bool:
 
 @app.post("/perform_ab_test")
 def ab_test(input: Input):
-    group = 0 #input.user_id % 2
+    group = input.user_id % 2
     if group == 0:
         recommended_tracks = model1_predict(input)
     else:
@@ -204,4 +204,13 @@ def model2_predict(input: Input) -> List:
     # number of recomm to produce based on number of tracks listened in the last month by user
     avg_n_of_tracks_in_user_sessions = usp.get_avg_n_of_tracks_in_user_sessions(input.user_id)
     p = classifierPlaylistProvider(MODEL_PATH, pre)
-    return p.predict_recommendations(n_of_tracks=avg_n_of_tracks_in_user_sessions, user_id=input.user_id)
+    x = p.predict_recommendations(n_of_tracks=avg_n_of_tracks_in_user_sessions, user_id=input.user_id)
+    print(x)
+    return x
+
+if __name__ == "__main__":
+    class z:
+        def __init__(self):
+            self.user_id = 429
+    x = z()
+    model2_predict(x)
