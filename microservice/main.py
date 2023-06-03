@@ -49,7 +49,7 @@ def load_ab_tests():
     df_ab_tests = pd.DataFrame(columns=col_names)
 
     if os.path.isfile(AB_TESTS_RESULTS_FILEPATH):
-        df_ab_tests = pd.read_csv(AB_TESTS_RESULTS_FILEPATH)
+        df_ab_tests = pd.read_csv(AB_TESTS_RESULTS_FILEPATH, index_col='index')
 
     return df_ab_tests
 
@@ -133,7 +133,6 @@ def ab_test(input: Input):
     if group == 0:
         recommended_tracks = model1_predict(input)
     else:
-        # pass
         recommended_tracks = model2_predict(input)
 
     df_ab_tests = load_ab_tests()
@@ -147,13 +146,13 @@ def ab_test(input: Input):
             "user_id": input.user_id,
             "group": group,
             "model": group + 1,
-            "prediction": prediction
+            "recomm_successful": prediction
         },
         ignore_index=True
     )
 
     # save file
-    df_ab_tests.to_csv(AB_TESTS_RESULTS_FILEPATH)
+    df_ab_tests.to_csv(AB_TESTS_RESULTS_FILEPATH, index_label='index')
 
     return {"Successful recommendation": prediction}
 
@@ -161,7 +160,7 @@ def ab_test(input: Input):
 @app.delete("/ab_test/results")
 def ab_test_clear_results():
     df_ab_tests = pd.DataFrame(columns=col_names)
-    df_ab_tests.to_csv(AB_TESTS_RESULTS_FILEPATH)
+    df_ab_tests.to_csv(AB_TESTS_RESULTS_FILEPATH, index_label='index')
 
 
 @app.get("/ab_test/results")
@@ -209,10 +208,19 @@ def model2_predict(input: Input) -> List:
     return x
 
 if __name__ == "__main__":
-    class z:
-        def __init__(self):
-            self.user_id = 429
-    x = z()
-    print("Model 2", model2_predict(x))
-    print('\n\n\n')
-    print("Model 1", model1_predict(x))
+    df_ab_tests = load_ab_tests()
+    print(df_ab_tests)
+    df_ab_tests = df_ab_tests.append(
+        {
+            "created_at": pd.Timestamp.now(),
+            "user_id": 105,
+            "group": 1,
+            "model": 2,
+            "recomm_successful": True
+        },
+        ignore_index=True
+    )
+    print(df_ab_tests)
+    df_ab_tests.to_csv(AB_TESTS_RESULTS_FILEPATH, index_label='index')
+    z = load_ab_tests()
+    print(z)
