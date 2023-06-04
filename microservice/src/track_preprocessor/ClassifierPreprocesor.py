@@ -4,17 +4,22 @@ import joblib
 
 class classifierPreprocesor(object):
 
-    FILE_WITH_ALL_TRACKS_FEATURES = "../data/batch1/tracks.json"
-    FILE_WITH_ALL_SESSIONS = "../data/batch1/sessions_100.json" #"data/v2/sessions.json"
-    FILE_WITH_ALL_USERS = "../data/v2/users.json"
-
-    def __init__(self, scaler_path, genres=None) -> None:
+    def __init__(self, scaler_path, genres=None, OS=None) -> None:
         self.sessions = None
         self.tracks = None
         self.users = None
         self.scaler = None
         self.scaler_path = scaler_path
         self.genres = genres
+        if OS == "WINDOWS": #DEFAULT: LINUX convention
+            self.FILE_WITH_ALL_TRACKS_FEATURES = "..\\data\\batch1\\tracks.json"
+            self.FILE_WITH_ALL_SESSIONS = "..\\data\\batch1\\sessions_100.json" #"data/v2/sessions.json" "../data/v2/sessions.json"
+            self.FILE_WITH_ALL_USERS = "..\\data\\v2\\users.json"
+        else:
+            self.FILE_WITH_ALL_TRACKS_FEATURES = "../data/batch1/tracks.json"
+            self.FILE_WITH_ALL_SESSIONS = "../data/batch1/sessions_100.json" # "../data/batch1/sessions_100.json" #"data/v2/sessions.json"
+            self.FILE_WITH_ALL_USERS = "../data/v2/users.json"
+
 
     def prepare(self):
         self.scaler = self.load_scaler_from_file(self.scaler_path)
@@ -60,6 +65,9 @@ class classifierPreprocesor(object):
         else:
             return self.sessions # TBD: filtering by date break
 
+    def get_dummie_sessions(self):
+        return self.sessions.head()
+
     def preprocess_tracks(self, tracks):
         self.track_ids = tracks.id
         VALID_COLUMN_NAMES = ['id', 'duration_ms', 'popularity', 'explicit', 'release_date','danceability', 'energy', 'key', 'loudness', 'speechiness', 'acousticness', 'instrumentalness', 'liveness', 'valence', 'tempo']
@@ -91,7 +99,7 @@ class classifierPreprocesor(object):
         user['premium_user'] = user['premium_user'] * 1
         if type(user) != pd.DataFrame:
             user = pd.DataFrame(user).transpose()
-        return user
+        return user.reset_index(drop=True)
 
     def load_scaler_from_file(self, scaler_path):
         return joblib.load(scaler_path)

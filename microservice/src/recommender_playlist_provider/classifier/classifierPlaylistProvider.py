@@ -21,19 +21,15 @@ class classifierPlaylistProvider:
         Returns indices of n_of_tracks
         :param past_sessions_tracks_ids:
         :param n_of_tracks:
-        :user: users.loc[x] ->  user_id                                                   102
-                                name                                                      NaN
-                                city                                                      NaN
-                                street                                                    NaN
-                                favourite_genres    [reggaeton, latin arena pop, modern rock]
-                                premium_user                                            False
+        :user_id:
         :return:
         """
         device = torch.device('cpu') if not torch.cuda.is_available() else torch.device('cuda')
         self.load_model_from_file(device)
 
         user = self.preprocesor.preprocess_user(user_id)
-        sessions = self.preprocesor.get_user_sessions(np.int64(user['user_id'][0]))
+        #sessions = self.preprocesor.get_user_sessions(np.int64(user['user_id'][0]))
+        sessions = self.preprocesor.get_dummie_sessions()
         tracks = self.preprocesor.get_tracks()
         to_check = MusicDataset(user, tracks, sessions)
         to_check.genres = self.preprocesor.get_genres()
@@ -45,15 +41,20 @@ class classifierPlaylistProvider:
         answer['like'] = 0
         pos = 0
         self.model.eval()
-        for _ in range(5):#range(len(user) * len(tracks)):
-            x, _ = next(iter(loader))
+        cap = 1000
+        for x, _ in loader: #_ in range(5):#range(len(user) * len(tracks)):
+            #x, _ = next(iter(loader))
             x = [ [ x[0][0].to(device), x[0][1].to(device) ], [ x[1][0].to(device), x[1][1].to(device) ] ]
             pred = self.model(x)
             for ans in pred:
                 answer.loc[pos, 'play'] = np.float64(ans[0])
                 answer.loc[pos, 'like'] = np.float64(ans[1])
                 pos += 1
-        answer['weights'] = answer['play'] + answer['like'] + np.random.rand(len(answer))/10
+            if pos >= cap:
+                break
+        noise = np.random.randn(len(answer))/30
+        noise = [n if n > 0 else 0 for n in noise]
+        answer['weights'] = answer['play'] + answer['like'] + noise
 
         return answer['track_id'].sample(n_of_tracks, weights=answer['weights']).to_numpy()
 
@@ -66,4 +67,4 @@ if __name__ == "__main__":
     pre = classifierPreprocesor('models/classifier_track.scaler')
     pre.prepare()
     p = classifierPlaylistProvider('models/classifier.model', pre)
-    print(p.predict_recommendations(5, user_id=101))#pd.read_json("data/v2/users.json").loc[0]))
+    print(p.predict_recommendations(5, user_id=429))
