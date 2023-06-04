@@ -2,9 +2,9 @@ import pandas as pd
 from sklearn.preprocessing import StandardScaler
 import json
 
-from src.common.constants import (RELEASE_DATA_COLUMN_NAME,
-                                  KEY_COLUMN_NAME)
-from src.recommender_playlist_provider.common.CallType import CallType
+from microservice.src.common.constants import (RELEASE_DATA_COLUMN_NAME,
+                                               KEY_COLUMN_NAME)
+from microservice.src.recommender_playlist_provider.common.CallType import CallType
 
 VALID_COLUMN_NAMES = ['duration_ms', 'popularity', 'explicit', 'release_date', 'danceability', 'energy', 'key',
                       'loudness', 'speechiness', 'acousticness', 'instrumentalness', 'liveness', 'valence', 'tempo']
@@ -13,7 +13,7 @@ SCALES_PATH = "models/encoder/standarization_scales.json"
 KEY_CATEGORIES_PATH = "models/encoder/key_categories.json"
 
 
-class VAEPreprocessor:
+class AEPreprocessor:
     def preprocess_tracks(self, tracks_data: pd.DataFrame, call_type: CallType = CallType.INFERENCE):
         if call_type.value == CallType.INFERENCE.value:
             sliced_data = tracks_data[VALID_COLUMN_NAMES]

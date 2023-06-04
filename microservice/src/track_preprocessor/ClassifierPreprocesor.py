@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import joblib
 
+
 class classifierPreprocesor(object):
 
     def __init__(self, scaler_path, genres=None, OS=None) -> None:

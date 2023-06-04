@@ -132,25 +132,22 @@ Przykładowa odpowiedź:
     "2gMXnyrvIjhVBUZwvLZDMP"
 ]
 ```
-## Results
-For the business criterium of at least 1 recommended on playlist track to be fully played by user, the models scored on AB tests as follows:
+## Wyniki
+W przypadku kryterium biznesowego, jakim jest co najmniej 1 rekomendowany utwór na liście odtwarzania do pełnego odtworzenia przez użytkownika, modele uzyskały następujące wyniki w testach AB:
 
 | **model AE** | **model classifier** |
 | :---: | :---: |
 | 70% | 30% |
 
-The results indicate following conclusions:
-* _The more effective approach with usage of ANN is with Autoenkoder latent space search_
-* Further architectures must be verified
+ardziej efektywnym podejściem z wykorzystaniem ANN jest przeszukiwanie ukrytej przestrzeni Autoenkodera.
 
-## Discussion
-The AE model is most similar to representation learning. This way, the recommended tracks are similar to tracks listened by the user. The effects were acceptable, however the moethod may in a long term result in user being trapped in sort of **echo chamber**, as the tracks will be similar only to tracks he listened.
+## Dyskusja
+Model AE jest najbardziej podobny do uczenia się reprezentacji. W ten sposób rekomendowane utwory są podobne do utworów słuchanych przez użytkownika. Efekty były akceptowalne, jednak może w dłuższej perspektywie spowodować, że użytkownik zostanie uwięziony w swego rodzaju komorze echa, ponieważ utwory będą podobne tylko do utworów, których słuchał.
 
-On the other hand, the classifier model attempted to solve a problem via classifying the preference of user towards each track. As the input is based not only on the hstory of listened tracks, but also user preference, there is a hope of classifying the track out of users mainstream listening preference as interesting. Nevertheless, this approach has many downsides: (1) very expensive & long training, (2) necessity of running the whole model with each and every track we are thinking of proposing, (3) constant results for given users, (4) the model is very prone to overfitting. As a result of above, the buisness criteria accuracy achived by this model were unacceptable.
+Z drugiej strony, model klasyfikatora próbował rozwiązać problem poprzez klasyfikację preferencji użytkownika w stosunku do każdego utworu. Ponieważ dane wejściowe opierają się nie tylko na historii słuchanych utworów, ale także na preferencjach użytkownika, istnieje nadzieja na sklasyfikowanie utworu z głównego nurtu preferencji słuchania użytkowników jako interesującego. Niemniej jednak podejście to ma wiele wad: (1) bardzo kosztowne i długie szkolenie, (2) konieczność uruchomienia całego modelu z każdym utworem, który zamierzamy zaproponować, (3) stałe wyniki dla danych użytkowników, (4) model jest bardzo podatny na nadmierne dopasowanie. W rezultacie dokładność kryteriów biznesowych osiągnięta przez ten model była nie do przyjęcia.
 
-## Conclusion
-The results indicate the better approach to the given problem by usage of ANN is representation learning crossed with K-Nearest Neighbours algorithm then track preference classification.
-
+## Wnioski
+Wyniki wskazują, że lepszym podejściem do danego problemu przy użyciu ANN jest uczenie się reprezentacji skrzyżowane z algorytmem K-Nearest Neighbours, a następnie klasyfikacja preferencji toru.
 
 
 

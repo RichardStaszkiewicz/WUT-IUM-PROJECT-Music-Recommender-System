@@ -1,14 +1,14 @@
 import numpy as np
 
-from src.track_preprocessor.VAEPreprocessor import VAEPreprocessor
-from src.recommender_playlist_provider.common.CallType import CallType
+from microservice.src.track_preprocessor.AEPreprocessor import AEPreprocessor
+from microservice.src.recommender_playlist_provider.common.CallType import CallType
 
 
-class VAEPlaylistProvider:
+class AEPlaylistProvider:
     def __init__(self, model, embeddings_all_tracks,
                  ids_all_tracks, all_tracks_features):
         super().__init__()
-        self.vae_preprocessor = VAEPreprocessor()
+        self.ae_preprocessor = AEPreprocessor()
         self.model = model
         self.embeddings_all_tracks = embeddings_all_tracks
         self.ids_all_tracks = ids_all_tracks
@@ -51,8 +51,8 @@ class VAEPlaylistProvider:
         return list(tracks_ids[ids_of_tracks_to_recomm])
 
     def _embed_tracks_to_latent_space(self, tracks):
-        preprocessed_tracks = self.vae_preprocessor.preprocess_tracks(tracks_data=tracks,
-                                                                      call_type=CallType.INFERENCE)
+        preprocessed_tracks = self.ae_preprocessor.preprocess_tracks(tracks_data=tracks,
+                                                                     call_type=CallType.INFERENCE)
         latent_space = self.model.predict(preprocessed_tracks)
         return latent_space
 
