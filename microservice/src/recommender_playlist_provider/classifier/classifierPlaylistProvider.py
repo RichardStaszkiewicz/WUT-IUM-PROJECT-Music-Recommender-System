@@ -49,7 +49,9 @@ class classifierPlaylistProvider:
                 answer.loc[pos, 'play'] = np.float64(ans[0])
                 answer.loc[pos, 'like'] = np.float64(ans[1])
                 pos += 1
-        answer['weights'] = answer['play'] + answer['like'] + np.random.rand(len(answer))/10
+        noise = np.random.randn(len(answer))/30
+        noise = [n if n > 0 else 0 for n in noise]
+        answer['weights'] = answer['play'] + answer['like'] + noise
 
         return answer['track_id'].sample(n_of_tracks, weights=answer['weights']).to_numpy()
 
