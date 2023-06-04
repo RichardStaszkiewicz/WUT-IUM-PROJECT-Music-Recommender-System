@@ -41,14 +41,17 @@ class classifierPlaylistProvider:
         answer['like'] = 0
         pos = 0
         self.model.eval()
-        for _ in range(5):#range(len(user) * len(tracks)):
-            x, _ = next(iter(loader))
+        cap = 1000
+        for x, _ in loader: #_ in range(5):#range(len(user) * len(tracks)):
+            #x, _ = next(iter(loader))
             x = [ [ x[0][0].to(device), x[0][1].to(device) ], [ x[1][0].to(device), x[1][1].to(device) ] ]
             pred = self.model(x)
             for ans in pred:
                 answer.loc[pos, 'play'] = np.float64(ans[0])
                 answer.loc[pos, 'like'] = np.float64(ans[1])
                 pos += 1
+            if pos >= cap:
+                break
         noise = np.random.randn(len(answer))/30
         noise = [n if n > 0 else 0 for n in noise]
         answer['weights'] = answer['play'] + answer['like'] + noise
@@ -64,4 +67,4 @@ if __name__ == "__main__":
     pre = classifierPreprocesor('models/classifier_track.scaler')
     pre.prepare()
     p = classifierPlaylistProvider('models/classifier.model', pre)
-    print(p.predict_recommendations(5, user_id=429))#pd.read_json("data/v2/users.json").loc[0]))
+    print(p.predict_recommendations(5, user_id=429))
