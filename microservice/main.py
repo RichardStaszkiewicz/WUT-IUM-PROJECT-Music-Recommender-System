@@ -86,6 +86,7 @@ with open(os.path.join(ENCODER_DIR_FILES, "track_ids.npy"), "rb") as f:
 class Input(BaseModel):
     user_id: int
 
+
 # USER SESSIONS PROVIDER
 from src.user_sessions_fetcher.common.UserSessionsProvider import UserSessionsProvider
 from src.user_sessions_fetcher.common.constants import (EVENT_TYPE_PLAY, EVENT_TYPE_LIKE)
